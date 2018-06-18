@@ -2,8 +2,8 @@ package com.gmail.lifeofreilly.ostendo;
 
 import org.bitcoinj.core.BlockChain;
 import org.bitcoinj.core.NetworkParameters;
-import org.bitcoinj.core.PeerEventListener;
 import org.bitcoinj.core.PeerGroup;
+import org.bitcoinj.core.listeners.OnTransactionBroadcastListener;
 import org.bitcoinj.net.discovery.DnsDiscovery;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.store.BlockStoreException;
@@ -16,14 +16,14 @@ import org.bitcoinj.store.MemoryBlockStore;
  */
 class PeerListener {
     private static final NetworkParameters NET_PARAMS = MainNetParams.get();
-    private final PeerEventListener peerEventListener;
+    private final OnTransactionBroadcastListener peerEventListener;
 
     /**
      * Sole constructor for PeerListener
      *
      * @param peerEventListener the custom peer event listener you would like to use
      */
-    public PeerListener(PeerEventListener peerEventListener) {
+    public PeerListener(OnTransactionBroadcastListener peerEventListener) {
         this.peerEventListener = peerEventListener;
     }
 
@@ -36,7 +36,7 @@ class PeerListener {
         BlockChain blockChain = new BlockChain(NET_PARAMS, new MemoryBlockStore(NET_PARAMS));
         PeerGroup peerGroup = new PeerGroup(NET_PARAMS, blockChain);
         peerGroup.addPeerDiscovery(new DnsDiscovery(NET_PARAMS));
-        peerGroup.addEventListener(peerEventListener);
+        peerGroup.addOnTransactionBroadcastListener(peerEventListener);
         peerGroup.startAsync();
 
 
